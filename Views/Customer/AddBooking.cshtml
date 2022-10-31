@@ -1,0 +1,93 @@
+﻿@model MyCartMVC.Models.AddBooking
+
+@{
+    ViewData["Title"] = "AddBooking";
+}
+<style>
+    body{
+    background:#c7f2c7
+}
+</style>
+
+<h1>AddBooking</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddBooking">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        
+
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" type="date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TimeOfPickup" class="control-label"></label>
+                <input asp-for="TimeOfPickup"   type="time" class="form-control" />
+                <span asp-validation-for="TimeOfPickup" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Weight"    class="control-label"></label>
+                <input asp-for="Weight" placeholder="In Kgs" id="weight" onkeyup="addweight()" class="form-control"  />
+                <span asp-validation-for="Weight"  class="text-danger"></span>
+                
+            </div>
+            <div class="form-group">
+                <label asp-for="Price"  class="control-label"></label>
+                <input asp-for="Price" id="price" placeholder="In Rs" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+           <br/>
+               <div>
+                   <input placeholder="1kg=50Rs" id="Rupees" />
+               </div>
+               <br/>
+            
+
+            
+             <div class="form-group">
+                <input type="submit"  style="background-color:black;color:white" value="Book" class="btn btn-primary" />
+            </div>
+            
+            @*div class="form-group">
+                <input type="submit" value="Create"  class="btn btn-primary" asp-action="ViewBooking" asp-controller="Customer" />
+            </div>*@
+          </form>
+        </div>
+</div>
+<script>
+    function addweight() {
+        var x = document.getElementById("weight");
+        var y = document.getElementById("price");
+        y.value = x.value * 50;
+    }
+
+</script>
+   
+   
+
+ 
+
+
+
+@*<script>
+ $( '#picker' ).function datetimepicker({
+        timepicker:true,
+        datepicker:false,
+        format:'H:1',
+        value:'09:45',
+        hours12:true,
+        step:5,
+        allowTimes:['01:00','01:15','01:30']
+
+    })
+    </script>*@
+
+@*<a asp-controller="Customer" asp-action="ViewBooking"><button value="submit" style="font-size:50px" type="button">ViewBooking</button></a>
+*@
+  
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

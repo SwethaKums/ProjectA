@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+
+       
+          body {
+            background:#c7f2c7
+        }
+
+        .first{
+
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+margin-top:50px
+    }
+    .row{
+        margin-bottom:10px;
+    }
+  
+</style>
+<div class="text-center">
+    <h1 class="display-4">Welcome To MyCart</h1>
+   
+</div>
+<div class=first>
+<div class="row">
+        <a asp-action="RegLogPage" asp-controller="Executive"><input style="padding:20px;background-color:black" type="submit" class="btn btn-primary" value="Executive" /></a>
+</div>
+<div class="rowws">
+        <a asp-action="RegLogPage" asp-controller="Customer"><input type="submit" style="padding:20px;background-color:black" class="btn btn-primary" value="Customer" /></a>
+</div>
+</div>

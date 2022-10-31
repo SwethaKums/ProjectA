@@ -1,0 +1,68 @@
+﻿@inject IHttpContextAccessor HttpContextAccessor
+@using Microsoft.AspNetCore.Http
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@ 
+@{
+}
+<ul class="navbar-nav">
+    @{
+        ViewBag.Data = @HttpContextAccessor.HttpContext.Session.GetString("Cname");
+    }
+    @if (ViewBag.Data!=null)
+    {
+        <li class="nav-item">
+            <a class="nav-link btn btn-link text-dark" href="#">Welcome @ViewBag.Data!!</a>
+        </li>
+        
+        <li class="nav-item">
+            @*<form id="logoutForm" class="form-inline" asp-controller="Login"  asp-action="Logout" asp-route-returnUrl="@Url.Action("Login", "Login", new { area = "" })">*@
+            <form>
+                <button id="Add"  style="background-color:white" type="submit" class="nav-link btn btn-link text-dark" asp-controller="Customer" asp-action="AddBooking">AddBooking</button>
+            </form>
+            @*</form>*@ 
+        </li>
+        <li class="nav-item">
+            @*<form id="logoutForm" class="form-inline" asp-controller="Login"  asp-action="Logout" asp-route-returnUrl="@Url.Action("Login", "Login", new { area = "" })">*@
+            <form>
+                <button id="view" style="background-color:white" type="submit" class="nav-link btn btn-link text-dark" asp-controller="Customer" asp-action="ViewBooking">ViewBooking</button>
+            </form>
+            @*</form>*@
+        </li>
+        
+        <li class="nav-item">
+            @*<form id="logoutForm" class="form-inline" asp-controller="Login"  asp-action="Logout" asp-route-returnUrl="@Url.Action("Login", "Login", new { area = "" })">*@
+            <form>
+                <button id="delete" style="background-color:white" type="submit" class="nav-link btn btn-link text-dark" asp-controller="Customer" asp-action="DeleteBooking">CancelBooking</button>
+            </form>
+            @*</form>*@
+        </li>
+        <li class="nav-item">
+            @*<form id="logoutForm" class="form-inline" asp-controller="Login"  asp-action="Logout" asp-route-returnUrl="@Url.Action("Login", "Login", new { area = "" })">*@
+            <form>
+                <button id="gotohome" type="submit" style="background-color:white" type="submit" class="nav-link btn btn-link text-dark" asp-controller="Customer" asp-action="Home">Go to Home</button>
+            </form>
+            @*</form>*@
+        </li>
+        <li class="nav-item">
+            @*<form id="logoutForm" class="form-inline" asp-controller="Login"  asp-action="Logout" asp-route-returnUrl="@Url.Action("Login", "Login", new { area = "" })">*@
+            <form>
+                <button id="logout" type="submit" style="background-color:white" type="submit" class="nav-link btn btn-link text-dark" asp-controller="Customer" asp-action="Logout">Logout</button>
+            </form>
+            @*</form>*@
+        </li>
+        
+    }
+    else
+    {
+
+
+      @* <li class="nav-item">
+            <a class="nav-link text-dark" id="login" asp-controller="Customer" asp-action="Registration">Register</a>
+        </li>
+       
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="login" asp-controller="Customer" asp-action="Login">Login</a>
+        </li>*@
+    }
+    </ul>
