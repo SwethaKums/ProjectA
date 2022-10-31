@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace MyCart.Models
+namespace MyCartMVC.Models
 {
     public partial class DeliveryManagementSystemContext : DbContext
     {
@@ -16,7 +16,7 @@ namespace MyCart.Models
         {
         }
 
-     
+        public virtual DbSet<AddBooking> AddBookings { get; set; } = null!;
         public virtual DbSet<CustomerRegistration> CustomerRegistrations { get; set; } = null!;
         public virtual DbSet<ExecutiveRegistration> ExecutiveRegistrations { get; set; } = null!;
 
@@ -31,7 +31,33 @@ namespace MyCart.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            modelBuilder.Entity<AddBooking>(entity =>
+            {
+                entity.HasKey(e => e.OrderId)
+                    .HasName("PK_OId");
+
+                entity.ToTable("AddBooking");
+
+                entity.Property(e => e.Date).HasColumnType("date");
+
+                entity.Property(e => e.TimeOfPickup)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Weight)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.AddBookings)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("Fk_CiD");
+
+                entity.HasOne(d => d.Executive)
+                    .WithMany(p => p.AddBookings)
+                    .HasForeignKey(d => d.ExecutiveId)
+                    .HasConstraintName("FK_EId");
+            });
 
             modelBuilder.Entity<CustomerRegistration>(entity =>
             {

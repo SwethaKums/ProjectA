@@ -1,51 +1,199 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyCart.Models;
+using Microsoft.EntityFrameworkCore;
+using MyCartMVC.Models;
+using Newtonsoft.Json;
+using System.Text;
 
-namespace MyCart.Controllers
+namespace MyCartMVC.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CustomerController : ControllerBase
+    public class CustomerController : Controller
     {
-        private readonly DeliveryManagementSystemContext db;
+        private readonly DeliveryManagementSystemContext dd;
+        private readonly ISession session;
 
-        public CustomerController(DeliveryManagementSystemContext _db)
+        public CustomerController(DeliveryManagementSystemContext _dd, IHttpContextAccessor httpContextAccessor)
         {
-            db=_db;
+            dd= _dd;
+            session = httpContextAccessor.HttpContext.Session;
+
         }
-        [Route("[action]")]
-        [HttpGet]
-        public IActionResult GetRegistration()
+        public IActionResult Registration()
         {
-            return Ok(db.CustomerRegistrations.ToList());
+            return View();
         }
-        [Route("[action]")]
+
         [HttpPost]
-        public IActionResult AddRegistration(CustomerRegistration a)
-
+        public async Task<IActionResult> Registration(CustomerRegistration e)
         {
-            db.CustomerRegistrations.Add(a);
-            db.SaveChanges();
-            return Ok(a);
+            using (var client = new HttpClient())
+            {
+                StringContent content = new StringContent(JsonConvert.SerializeObject(e), Encoding.UTF8, "application/json");
+                using (var response = await client.PostAsync("https://localhost:44374/api/Customer/AddRegistration", content))
+                {
+                    string apiresponse = await response.Content.ReadAsStringAsync();
+                    var empobj = JsonConvert.DeserializeObject<CustomerRegistration>(apiresponse);
+                }
+            }
+            return RedirectToAction("Login");
+        }
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public  IActionResult Login(CustomerRegistration e)
+        {
+            // HttpContext.Session.SetString("Uno", dd.CustomerRegistrations);
+            using (var client = new HttpClient())
+            {
+             using (var response = client.GetAsync("https://localhost:44374/api/Customer/AddLogin?username="+e.CustomerName+"&password="+e.Password).Result)
+                {
+                    string apiresponse = response.Content.ReadAsStringAsync().Result;
+                  //string json = JsonConvert.SerializeObject(apiresponse, Formatting.Indented);
+                    var empobj = JsonConvert.DeserializeObject<CustomerRegistration>(apiresponse);
+                    if (empobj!=null)
+                    {
+                        ViewBag.SuccessMessage="You have logged in successfully!!!";
+                        HttpContext.Session.SetInt32("cusid", empobj.CustomerId);
+                        HttpContext.Session.SetString("Cname", empobj.CustomerName);
+                        return RedirectToAction("Home");
+                    }
+                    else
+                    {
+                        ViewBag.FailureMessage="Invalid UserName or Password";
+                        return View();
+
+                    }
+                }
+               
+            }
+            
 
         }
-        [Route("[action]")]
-        [HttpGet]
-
-        public IActionResult GetLogin()
+        public IActionResult RegLogPage()
         {
-            return Ok(db.CustomerRegistrations.ToList());
+            return View();
         }
-        [Route("[action]")]
-        [HttpGet]
         
-        public IActionResult AddLogin(string username,string password)
+        public IActionResult Home()
+        {
+            return View();
+        }
+    
+        [HttpGet]
+        public IActionResult AddBooking()
+        {
+            var Cname = HttpContext.Session.GetString("cname");
+            if(Cname !=null)
+            {
+                return RedirectToAction("Home");
+
+            }
+            else
+            {
+                return View("Login");
+            }
+          //  return View();
+        }
+        
+
+
+        [HttpPost]
+          public IActionResult AddBooking(AddBooking a)
+        {
+            // var Myid= HttpContext.Session.GetString("cusid");
+            // a.CustomerId=int.Parse(Myid);
+           
+            var Eid=HttpContext.Session.GetInt32("Empid");
+            var cusid=HttpContext.Session.GetInt32("cusid");
+            a.CustomerId=cusid;
+            a.ExecutiveId=Eid;
+            // ViewBag.vval=a.CustomerId;
+            dd.AddBookings.Add(a);
+            dd.SaveChanges();
+            return View("success");
+            List<int> exe = (from i in dd.ExecutiveRegistrations
+                      select i.ExecutiveId).ToList();
+            //var final = dd.AddBookings.Where(val=>val.CustomerId==a.CustomerId).ToList();
+            //return View("viewBooking", final);
+
+             }
+        public IActionResult success()
+        {
+            return View();
+        }
+        public IActionResult ViewBooking()
+        {
+            var ans= HttpContext.Session.GetInt32("cusid");
+          
+            var result = dd.AddBookings.Where(res => res.CustomerId==ans).ToList();
+
+            return View("ViewBooking",result);
+
+        }
+       
+        //public IActionResult Delete()
+        //{
+        //    var del= HttpContext.Session.GetInt32("cusid");
+        //    return View();
+        //}
+
+
+        public IActionResult DeleteBooking()
 
         {
-         var result=   db.CustomerRegistrations.Where(row => row.CustomerName==username && row.Password==password).FirstOrDefault();
-            return Ok (result);
+            // var remove=  HttpContext.Session.GetString(id.ToString());
+            var del = HttpContext.Session.GetInt32("cusid");
+            var e = dd.AddBookings.ToList();
+            var res = dd.AddBookings.Where(var => var.CustomerId==del);
+            return View(res);
         }
-    }
+        
+        
+        public IActionResult DeleteConfirmed(int id)
+        {
+           // var del = HttpContext.Session.GetInt32("cusid");
+            AddBooking e = dd.AddBookings.Find(id);
+            dd.AddBookings.Remove(e);
+            dd.SaveChanges();
+            return View("DeleteSuccess");
+            ////return RedirectToAction("ViewBooking");
 
+        }
+        public IActionResult DeleteSuccess()
+        {
+
+            return View();
+        }
+        //public IActionResult DeleteBooking(int OrderId)
+
+        //{
+
+        //    var result = dd.AddBookings.Where(res => res.CustomerId==ans);
+        //    AddBooking e = dd.AddBookings.Find(OrderId);
+        //     return View("DeleteBooking", e);
+
+        //}
+        //[HttpPost]
+        //[ActionName("DeleteBooking")]
+
+        //public IActionResult DeleteConfirmed(int OrderId)
+        //{
+        //  var sss=  HttpContext.Session.GetInt32("Orderid");
+        //    var result = dd.AddBookings.Where(res => res.OrderId==sss);
+        //    return View("DeleteBooking", result);
+
+
+
+        //}
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
+
+
+    }
 }

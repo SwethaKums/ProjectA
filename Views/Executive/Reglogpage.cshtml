@@ -1,0 +1,33 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<style>
+
+    body {
+        background:#c7f2c7
+    }
+    .first {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 100px
+    }
+
+    .row {
+        margin-bottom: 10px;
+    }
+    .rows{
+        margin-bottom:10px;
+    }
+</style>
+<div class="first">
+<div class="row">
+        <a asp-action="Registration" asp-controller="Executive"><input  type="submit" style="padding:40px;height:40px;width:200px;background-color:black" class="btn btn-primary" value="Registration" /></a>
+</div>
+<div class="rowws">
+        <a asp-action="Login" asp-controller="Executive"><input type="submit" style="padding:40px;height:40px;width:200px;background-color:black" class="btn btn-primary" value="Login" /></a>
+</div>
+</div>
